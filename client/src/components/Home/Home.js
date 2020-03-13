@@ -23,7 +23,9 @@ const Home = props => {
 	const handleValidation = e => {
 		if (nameError && roomError && btnError) {
 			btnRef.current.classList.add("shake");
-			setTimeout(() => btnRef.current.classList.remove("shake"), 1000);
+			setTimeout(() => {
+				if (btnRef.current) btnRef.current.classList.remove("shake")
+			}, 1000);
 		}
 
 		(nameError || roomError) && setBtnError(true);
@@ -50,7 +52,7 @@ const Home = props => {
 						<Input {...{ focus: true, setState: setName, error: nameError, setError: setNameError, messages: ["You need a name first!", "Enter a name to chat with"] }} />
 
 						<Input {...{
-							focuse: false, setState: setRoom, error: roomError, setError: setRoomError,
+							focus: false, setState: setRoom, error: roomError, setError: setRoomError,
 							messages: ["We don't know which room you want to chat in!", "Which room would you like to join?"]
 						}} />
 
@@ -71,21 +73,15 @@ const Home = props => {
 };
 
 const Input = ({ focus, setState, error, setError, messages }) => {
-	const ref = React.createRef();
-
-	useEffect(() => {
-		if (focus) ref.current.focus();
-	}, []);
-
 
 	return (
 		<input
-			ref={ref}
 			type="text"
 			placeholder={error ? messages[0] : messages[1]}
 			className={error ? "shake" : ""}
 			onFocus={() => error ? setError(false) : null}
 			onChange={e => setState(e.target.value)}
+			autoFocus={focus ? true : false}
 		/>
 	);
 };
