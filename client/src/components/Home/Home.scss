@@ -68,11 +68,15 @@ body {
 
 		button {
 			width: calc(100% - 20px);
-			background-color: rosybrown;
+			background-color: transparent;
+			border: none;
+			color: white;
+			transition: transform 0.5s
 		}
 
 		button:hover {
-			opacity: 0.8;
+			background-color: rosybrown;
+			transform: translateY(-3px);
 		}
 
 		p {
