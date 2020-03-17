@@ -1,5 +1,14 @@
 @import url("https://fonts.googleapis.com/css?family=Quicksand&display=swap");
 
+$primary-colour: rosybrown;
+
+@mixin flex($direction, $align, $justify) {
+	display: flex;
+	flex-direction: $direction;
+	align-items: $align;
+	justify-content: $justify;
+}
+
 * {
 	box-sizing: border-box;
 	font-family: "Quicksand", sans-serif;
@@ -20,16 +29,35 @@ body {
 	width: calc(100vw - 10px);
 	display: flex;
 	background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+	transform: translateX(-100%);
+	transition: all 1s;
+}
+
+.fade {
+	animation: slide 1s ease-out 1 forwards;
+}
+
+@keyframes slide {
+	0% {
+		transform: skewX(10deg) translateX(-100%);
+	}
+
+	75% {
+		transform: skewX(-5deg) translateX(0);
+	}
+
+	100% {
+		transform: skewX(0deg) translateX(0);
+	}
 }
 
 .banner {
 	height: 100%;
 	width: 70%;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
+	@include flex(column, center, center);
 	color: white;
+	background-color: inherit;
+	z-index: 10;
 
 	h2 {
 		font-size: 25px;
@@ -42,28 +70,28 @@ body {
 
 .form-class {
 	width: 30%;
-	margin: 20px;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: space-around;
+	margin: 20px 0;
+	@include flex(column, center, space-around);
 	border-left: 3px solid rgba(188, 143, 143, 0.5);
 
 	form {
 		width: 100%;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-evenly;
+		@include flex(column, stretch, space-evenly);
 		height: 25%;
 
 		input,
 		button {
 			border-radius: 5px;
 			outline: none;
-			border: 2px solid rosybrown;
+			border: 2px solid $primary-colour;
 			margin: 10px;
 			padding: 5px;
 			font-size: 16px;
+			transition: all 0.5s;
+		}
+
+		input:focus {
+			border-radius: 20px;
 		}
 
 		button {
@@ -75,7 +103,7 @@ body {
 		}
 
 		button:hover {
-			background-color: rosybrown;
+			background-color: $primary-colour;
 			transform: translateY(-3px);
 		}
 
@@ -83,20 +111,28 @@ body {
 			color: rgb(207, 123, 123);
 			margin: 0;
 			text-align: center;
+			transition: all 1s;
+			z-index: 1;
+		}
+
+		.fade-out {
+			transform: translateX(100%);
+		}
+		
+		.fade-in {
+			transform: translateX(0);
 		}
 	}
 }
 
 .shake {
-	animation-name: shake;
-	animation-duration: 0.5s;
-	animation-iteration-count: 1;
-	animation-timing-function: ease-in-out;
+	animation: shake 0.5s ease-in-out 1;
+
+	&::placeholder {
+		color: red;
+	}
 }
 
-.shake::placeholder {
-	color: red;
-}
 
 @keyframes shake {
 	10% {
@@ -114,8 +150,4 @@ body {
 	75% {
 		transform: translateX(3px);
 	}
-}
-
-.hidden {
-	display: hidden !important;
 }

@@ -35,7 +35,7 @@ function handleConnection(socket) {
 	console.log(`Socket connected`);
 
 	//join event handler
-	socket.on("join", ({ name, room }, callBack) => {
+	socket.on("join", ({ name, room }) => {
 
 		//Emit message event as a welcome
 		socket.emit("message", {
@@ -46,9 +46,7 @@ function handleConnection(socket) {
 		//Add the connection to the room
 		socket.join(room);
 
-		const { error } = addUser({ id: socket.id, name, room });
-
-		if (error) return callBack({ error });
+		!addUser({ id: socket.id, name, room })
 
 		console.log(room_map);
 
@@ -61,6 +59,16 @@ function handleConnection(socket) {
 
 		io.to(room).emit("roomData", { users: room_map.get(room) });
 	});
+
+	//checkUser event handler
+	socket.on("checkUser", ({ name, room }, callback) => {
+		if (!room_map.get(room)) return callback(false);
+
+		if (room_map.get(room).find(item => item.name == name)) return callback(true);
+
+		return callback(false);
+	});
+	//
 
 	//message event handler
 	socket.on("sendMessage", ({ message, room, name }, callBack) => {
@@ -82,6 +90,8 @@ function handleConnection(socket) {
 		console.log(`Socket disconnected`);
 
 		removeUser({ name, room });
+
+		socket.broadcast.to(room).emit("notTyping", { name });
 
 		socket.broadcast.to(room).emit("message", {
 			message: `${name} has left the room`,

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
+import io from "socket.io-client";
 import "./Home.scss";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
+
+let socket;
 
 const Home = props => {
 	const [name, setName] = useState("");
@@ -8,12 +11,27 @@ const Home = props => {
 	const [nameError, setNameError] = useState(false);
 	const [roomError, setRoomError] = useState(false);
 	const [btnError, setBtnError] = useState(false);
-	const [duplicate, setDuplicate] = useState("");
-	const btnRef = React.createRef();
+	const [btnShake, setBtnShake] = useState(false);
+	const [errMsg, setErrMsg] = useState("");
+	const [error, setError] = useState(false);
+	const [submit, setSubmit] = useState(false);
+	const [fade, setFade] = useState(false);
+
+	const ENDPOINT = "http://localhost:8000/";
 
 	useEffect(() => {
-		document.querySelector("title").textContent = "Home";
-		props && props.location.error && setDuplicate(props.location.error);
+		document.querySelector("title").textContent = "Welcome!";
+
+		if (props && props.location.error) {
+			setErrMsg(props.location.error);
+			setError(true);
+			setTimeout(() => setError(false), 5000);
+		}
+
+		socket = io(ENDPOINT);
+
+		setFade(true);
+
 	}, []);
 
 	useEffect(() => {
@@ -21,24 +39,43 @@ const Home = props => {
 	}, [nameError, roomError]);
 
 	const handleValidation = e => {
-		if (nameError && roomError && btnError) {
-			btnRef.current.classList.add("shake");
-			setTimeout(() => {
-				if (btnRef.current) btnRef.current.classList.remove("shake")
-			}, 1000);
-		}
 
-		(nameError || roomError) && setBtnError(true);
+		e.preventDefault();
+
+		if (nameError || roomError) {
+			setBtnError(true);
+			setBtnShake(true);
+			setTimeout(() => setBtnShake(false), 550);
+		}
 
 		name || setNameError(true);
 		room || setRoomError(true);
 
-		(!name || !room) && e.preventDefault();
+		if (name && room) {
+
+			socket.emit("checkUser", { name, room }, bool => {
+
+				if (bool) {
+					setErrMsg(`"${name}" has already been taken in the chat room "${room}"`);
+					setError(true);
+					setTimeout(() => setError(false), 5000);
+				} else setSubmit(true);
+
+			});
+
+		}
+
 	};
+
+	if (submit) return <Redirect to={{
+		pathname: `/chat`,
+		search: `?name=${name}&room=${room}`,
+		state: { token: true }
+	}} />;
 
 	return (
 		<>
-			<div className="home-class">
+			<div className={fade ? "home-class fade" : "home-class"}>
 				<div className="banner">
 					<h2>Welcome to yet another Chat App!</h2>
 
@@ -47,7 +84,7 @@ const Home = props => {
 
 				<div className="form-class">
 					<form>
-						<p>{duplicate}</p>
+						<p className={error ? "fade-in" : "fade-out"}>{errMsg}</p>
 
 						<Input {...{ focus: true, setState: setName, error: nameError, setError: setNameError, messages: ["You need a name first!", "Enter a name to chat with"] }} />
 
@@ -56,10 +93,16 @@ const Home = props => {
 							messages: ["We don't know which room you want to chat in!", "Which room would you like to join?"]
 						}} />
 
-						<Link onClick={handleValidation} to={`/chat?name=${name}&room=${room}`}>
-							<button type="submit" ref={btnRef}>
+						<Link onClick={handleValidation} to={{
+							pathname: `/chat`,
+							search: `?name=${name}&room=${room}`,
+							state: { token: true }
+						}}>
+
+							<button type="submit" className={btnShake ? "shake" : ""}>
 								{btnError ? "Sorry, can't let you thru!" : "Start Chatting"}
 							</button>
+
 						</Link>
 
 					</form>

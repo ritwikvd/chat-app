@@ -1,3 +1,5 @@
+@import "../Home/Home.scss";
+
 .chat-class {
 	margin: 5px;
 	padding: 0;
@@ -13,17 +15,11 @@
 .room-info {
 	color: white;
 	width: 50%;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
+	@include flex(column, center, center);
 
 	ul {
 		padding: 0;
-		display: flex;
-		flex-flow: column wrap;
-		justify-content: space-evenly;
-		align-items: center;
+		@include flex(column, center, space-evenly);
 		margin: 0 0 20px 0;
 
 		li {
@@ -31,16 +27,22 @@
 		}
 	}
 
+	a {
+		margin: 5px;
+	}
+
 	button {
 		font-size: larger;
 		border-radius: 10px;
-		border: 1px solid rosybrown;
-		background-color: rosybrown;
 		color: white;
 		padding: 5px;
+		background-color: transparent;
+		border: transparent;
+		transition: all 0.3s;
 
 		&:hover {
-			opacity: 0.8;
+			background-color: $primary-colour;
+			transform: scale(1.1);
 		}
 
 		&:focus {
@@ -51,21 +53,18 @@
 
 .chat-box-container {
 	width: 50%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
+	@include flex(row, center, center);
 
 	.chat-box {
 		height: 90%;
 		width: 70%;
 		background-color: white;
 		border-radius: 10px;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
+		@include flex(column, stretch, space-between);
 
 		p {
 			margin: 5px;
+			display: inline;
 		}
 
 		form {
@@ -81,7 +80,7 @@
 				margin: 0;
 				border-top-left-radius: 8px;
 				border-bottom-left-radius: 8px;
-				border: 1px solid rosybrown;
+				border: 1px solid $primary-colour;
 			}
 
 			input:focus,
@@ -94,11 +93,12 @@
 				height: 100%;
 				width: 20%;
 				font-size: larger;
-				border: 1px solid rosybrown;
+				border: 1px solid $primary-colour;
 				border-left: none;
 				border-top-right-radius: 8px;
 				border-bottom-right-radius: 8px;
-				background-color: rosybrown;
+				background-color: $primary-colour;
+				color: white;
 			}
 
 			button:hover {
@@ -112,8 +112,40 @@
 			height: 85%;
 
 			.css-y1c0xs {
-				display: flex;
-				flex-direction: column;
+				@include flex(column, stretch, start);
+			}
+		}
+
+		.typing-container {
+			margin: 0 0 0 5px;
+		}
+
+		.dots {
+			display: inline-block;
+			width: 5px;
+			height: 5px;
+			border-radius: 50%;
+			background-color: gray;
+			border-color: gray;
+			margin: 5px;
+			animation: grow 1s linear infinite;
+		}
+
+		.dots:nth-of-type(2) {
+			animation-delay: 0.2s;
+		}
+		
+		.dots:nth-of-type(3) {
+			animation-delay: 0.3s;
+		}
+
+		@keyframes grow {
+			0%, 100% {
+				transform: scale(1);
+			}
+			50% {
+				transform: scale(2);
+				background-color: white;
 			}
 		}
 	}

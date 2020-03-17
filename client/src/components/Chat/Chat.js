@@ -1,31 +1,31 @@
 import React, { useState, useEffect } from "react";
 import queryString from "query-string";
-import io from "socket.io-client";
 import { Link, Redirect } from "react-router-dom";
-
+import io from "socket.io-client";
 import ChatBox from "../ChatBox/ChatBox.js";
 import Input from "../Input/Input.js";
 
 import "./Chat.scss";
 
-//Create socket external variable
 let socket = null;
 
-const Chat = ({ location }) => {
+const Chat = ({ location: { search, state } }) => {
+
 	const [name, setName] = useState("");
 	const [room, setRoom] = useState("");
 	const [users, setUsers] = useState([]);
 	const [messages, setMessages] = useState([]);
 	const [message, setMessage] = useState("");
-	const [redirect, setRedirect] = useState(false);
-	const [redirectError, setRedirectError] = useState("");
 	const [typing, setTyping] = useState([]);
+	const [fade, setFade] = useState(false);
 
 	const ENDPOINT = "http://localhost:8000/";
 
 	useEffect(() => {
 
-		const { name, room } = queryString.parse(location.search);
+		setFade(true);
+
+		const { name, room } = queryString.parse(search);
 
 		//Document title
 		document.querySelector("title").textContent = `Have fun chatting in ${room}!`;
@@ -33,7 +33,6 @@ const Chat = ({ location }) => {
 		setName(name);
 		setRoom(room);
 
-		//Socket connection
 		socket = io(ENDPOINT);
 
 		//message event handler
@@ -44,6 +43,7 @@ const Chat = ({ location }) => {
 
 		//typing event handlers
 		socket.on("isTyping", ({ name }) => setTyping(prev => prev.includes(name) ? prev : [...prev, name]));
+
 		socket.on("notTyping", ({ name }) => setTyping(prev => {
 			const arr = [...prev];
 			const index = arr.indexOf(name);
@@ -52,11 +52,8 @@ const Chat = ({ location }) => {
 		}));
 		//
 
-		//Emit join on first join
-		socket.emit("join", { name, room }, ({ error }) => {
-			setRedirectError(error);
-			setRedirect(true);
-		});
+		//Join room
+		socket.emit("join", { name, room });
 
 		//Disconnect on unmount
 		return () => {
@@ -72,17 +69,15 @@ const Chat = ({ location }) => {
 		message && socket.emit("sendMessage", { message, room, name }, () => setMessage(""));
 	};
 
-	const setPersonTyping = typing => {
-		socket.emit("typing", { typing, room, name });
-	};
+	const setPersonTyping = typing => socket.emit("typing", { typing, room, name });
 
-	if (redirect) return <Redirect to={{
+	if (!state || !state.token) return <Redirect to={{
 		pathname: "/",
-		error: redirectError
+		error: "Hey! no cheating : |"
 	}} />;
 
 	return (
-		<div className="chat-class">
+		<div className={fade ? "chat-class fade" : "chat-class"}>
 			<div className="room-info">
 
 				<h2>You're now chatting in {room}!</h2>
@@ -103,7 +98,14 @@ const Chat = ({ location }) => {
 
 					<ChatBox {...{ messages, name }} />
 
-					{typing.length ? <p>{typing.join(", ")} {typing.length > 1 ? " are typing..." : " is typing..."}</p> : null}
+					{typing.length ?
+						<div className="typing-container">
+							<div className="dots"></div>
+							<div className="dots"></div>
+							<div className="dots"></div>
+							{typing.length < 3 ? <p>{typing.join(", ")} {typing.length > 1 ? " are typing..." : " is typing..."}</p> :
+								<p>Several people are typing...</p>}
+						</div> : null}
 
 					<Input {...{ message, setMessage, sendMessage, setPersonTyping }} />
 
@@ -114,7 +116,7 @@ const Chat = ({ location }) => {
 	);
 }
 
-const Lonesome = () => <p>Looks like you're the only one being unproductive :(</p>;
+const Lonesome = () => <p>Looks like you're the only one being unproductive :/</p>;
 
 const Mingling = ({ users }) =>
 	(
