@@ -116,7 +116,7 @@ const Chat = ({ location: { search, state } }) => {
 	);
 }
 
-const Lonesome = () => <p>Looks like you're the only one being unproductive :/</p>;
+const Lonesome = () => <p>Looks like you're the only one being unproductive : |</p>;
 
 const Mingling = ({ users }) =>
 	(
