@@ -24,7 +24,6 @@ app.get("*", (req, res) =>
 	res.sendFile(path.resolve("../client/build/index.html"))
 );
 
-
 const PORT = process.env.PORT || 8080;
 
 server.listen(PORT, console.log(`yoohoo from ${process.env.NODE_ENV} on port:${PORT}`));
