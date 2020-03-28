@@ -19,8 +19,6 @@ const Chat = ({ location: { search, state } }) => {
 	const [typing, setTyping] = useState([]);
 	const [fade, setFade] = useState(false);
 
-	const ENDPOINT = "http://localhost:8000/";
-
 	useEffect(() => {
 
 		setFade(true);
@@ -33,7 +31,7 @@ const Chat = ({ location: { search, state } }) => {
 		setName(name);
 		setRoom(room);
 
-		socket = io(ENDPOINT);
+		socket = io(process.env.REACT_APP_SOCKET_ENDPOINT);
 
 		//message event handler
 		socket.on("message", message => setMessages(prev => [...prev, message]));

@@ -17,8 +17,6 @@ const Home = props => {
 	const [submit, setSubmit] = useState(false);
 	const [fade, setFade] = useState(false);
 
-	const ENDPOINT = "http://localhost:8000/";
-
 	useEffect(() => {
 		document.querySelector("title").textContent = "Welcome!";
 
@@ -28,7 +26,7 @@ const Home = props => {
 			setTimeout(() => setError(false), 5000);
 		}
 
-		socket = io(ENDPOINT);
+		socket = io(process.env.REACT_APP_SOCKET_ENDPOINT);
 
 		setFade(true);
 

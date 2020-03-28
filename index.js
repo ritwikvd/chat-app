@@ -10,7 +10,7 @@ const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 
 //Configure path to env variables
-dotenv.config({ path: "./config.env" });
+dotenv.config({ path: "./config/config.env" });
 
 //Initialize middleware
 app.use(cors());
