@@ -9,10 +9,7 @@ function addUser({ name, room, id }) {
 }
 
 function removeUser({ name, room }) {
-	let index = null;
-	room_map
-		.get(room)
-		.forEach((item, i) => (item.name == name ? (index = i) : null));
+	let index = room_map.get(room).findIndex(item => item.name === name);
 	room_map.get(room).splice(index, 1);
 }
 

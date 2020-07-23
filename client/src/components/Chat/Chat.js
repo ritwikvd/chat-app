@@ -10,7 +10,6 @@ import "./Chat.scss";
 let socket = null;
 
 const Chat = ({ location: { search, state } }) => {
-
 	const [name, setName] = useState("");
 	const [room, setRoom] = useState("");
 	const [users, setUsers] = useState([]);
@@ -20,7 +19,6 @@ const Chat = ({ location: { search, state } }) => {
 	const [fade, setFade] = useState(false);
 
 	useEffect(() => {
-
 		setFade(true);
 
 		const { name, room } = queryString.parse(search);
@@ -40,14 +38,16 @@ const Chat = ({ location: { search, state } }) => {
 		socket.on("roomData", ({ users }) => setUsers([...users.filter(user => user.name !== name)]));
 
 		//typing event handlers
-		socket.on("isTyping", ({ name }) => setTyping(prev => prev.includes(name) ? prev : [...prev, name]));
+		socket.on("isTyping", ({ name }) => setTyping(prev => (prev.includes(name) ? prev : [...prev, name])));
 
-		socket.on("notTyping", ({ name }) => setTyping(prev => {
-			const arr = [...prev];
-			const index = arr.indexOf(name);
-			arr.splice(index, 1);
-			return arr;
-		}));
+		socket.on("notTyping", ({ name }) =>
+			setTyping(prev => {
+				const arr = [...prev];
+				const index = arr.indexOf(name);
+				arr.splice(index, 1);
+				return arr;
+			})
+		);
 		//
 
 		//Join room
@@ -59,7 +59,6 @@ const Chat = ({ location: { search, state } }) => {
 			socket.disconnect();
 		};
 		//
-
 	}, []);
 
 	const sendMessage = e => {
@@ -69,65 +68,66 @@ const Chat = ({ location: { search, state } }) => {
 
 	const setPersonTyping = typing => socket.emit("typing", { typing, room, name });
 
-	if (!state || !state.token) return <Redirect to={{
-		pathname: "/",
-		error: "Hey! no cheating : |"
-	}} />;
+	if (!state || !state.token)
+		return (
+			<Redirect
+				to={{
+					pathname: "/",
+					error: "Hey! no cheating : |"
+				}}
+			/>
+		);
 
 	return (
 		<div className={fade ? "chat-class fade" : "chat-class"}>
 			<div className="room-info">
-
 				<h2>You're now chatting in {room}!</h2>
 
 				{users.length == 0 ? <Lonesome /> : <Mingling {...{ users: users.map(user => user.name) }} />}
 
 				<Link to={`/`}>
-
 					<button>Need to go?</button>
-
 				</Link>
-
 			</div>
 
 			<div className="chat-box-container">
-
 				<div className="chat-box">
-
 					<ChatBox {...{ messages, name }} />
 
-					{typing.length ?
+					{typing.length ? (
 						<div className="typing-container">
 							<div className="dots"></div>
 							<div className="dots"></div>
 							<div className="dots"></div>
-							{typing.length < 3 ? <p>{typing.join(", ")} {typing.length > 1 ? " are typing..." : " is typing..."}</p> :
-								<p>Several people are typing...</p>}
-						</div> : null}
+							{typing.length < 3 ? (
+								<p>
+									{typing.join(", ")} {typing.length > 1 ? " are typing..." : " is typing..."}
+								</p>
+							) : (
+								<p>Several people are typing...</p>
+							)}
+						</div>
+					) : null}
 
 					<Input {...{ message, setMessage, sendMessage, setPersonTyping }} />
-
 				</div>
-
 			</div>
 		</div>
 	);
-}
+};
 
-const Lonesome = () => <p>Looks like you're the only one being unproductive : |</p>;
+const Lonesome = () => <p>Looks like you're the only one here : |</p>;
 
-const Mingling = ({ users }) =>
-	(
-		<>
-			<p>
-				You're wasting time with{" "}
-				{users.length == 1 ? "this slacker" : "these slackers"}...
-			</p>
+const Mingling = ({ users }) => (
+	<>
+		<p>You're here with {users.length == 1 ? "this chatter" : "these chatters"}...</p>
 
-			<ul>
-				{users.map((user, index) => <li key={index}>{user}</li>)}
-			</ul>
-		</>
-	);
+		<ul>
+			{users.map((user, index) => (
+				<li key={index}>{user}</li>
+			))}
+		</ul>
+	</>
+);
 
 export default Chat;
