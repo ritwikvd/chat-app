@@ -2,6 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const path = require("path");
+const fs = require("fs");
 
 const { room_map, addUser, removeUser } = require("./users");
 
@@ -21,6 +22,19 @@ app.use(express.json());
 app.use(express.static("./client/build"));
 
 app.get("*", (req, res) => res.sendFile(path.resolve("./client/build/index.html")));
+// app.get("*", (req, res) => {
+// 	let response = "";
+// 	fs.readdir("./client/build", (e, files) => {
+// 		res.send("inside readdir");
+// 		if (e) {
+// 			res.end("error " + e);
+// 			return;
+// 		}
+//
+// 		files.forEach(file => (response += file));
+// 		res.end(response);
+// 	});
+// });
 //
 
 const PORT = process.env.PORT || 8080;
@@ -38,7 +52,7 @@ function handleConnection(socket) {
 		//Emit message event as a welcome
 		socket.emit("message", {
 			message: `${name}! have fun in the ${room} chat room`,
-			user: "admin",
+			user: "admin"
 		});
 
 		//Add the connection to the room
@@ -51,7 +65,7 @@ function handleConnection(socket) {
 		//message broadcast to the rest of the room
 		socket.broadcast.to(room).emit("message", {
 			message: `${name} joined the room!`,
-			user: "admin",
+			user: "admin"
 		});
 		//
 
@@ -72,7 +86,7 @@ function handleConnection(socket) {
 	socket.on("sendMessage", ({ message, room, name }, callBack) => {
 		io.to(room).emit("message", {
 			message,
-			user: name,
+			user: name
 		});
 
 		callBack();
@@ -80,7 +94,11 @@ function handleConnection(socket) {
 	//
 
 	//typing event handler
-	socket.on("typing", ({ typing, room, name }) => (typing ? socket.broadcast.to(room).emit("isTyping", { name }) : socket.broadcast.to(room).emit("notTyping", { name })));
+	socket.on("typing", ({ typing, room, name }) =>
+		typing
+			? socket.broadcast.to(room).emit("isTyping", { name })
+			: socket.broadcast.to(room).emit("notTyping", { name })
+	);
 
 	//disconnect event handler
 	socket.on("remove", ({ name, room }) => {
@@ -92,7 +110,7 @@ function handleConnection(socket) {
 
 		socket.broadcast.to(room).emit("message", {
 			message: `${name} has left the room`,
-			user: "admin",
+			user: "admin"
 		});
 
 		io.to(room).emit("roomData", { users: room_map.get(room) });
