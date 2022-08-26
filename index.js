@@ -22,20 +22,6 @@ app.use(express.json());
 app.use(express.static("./client/build"));
 
 app.get("*", (req, res) => res.sendFile(path.resolve("./client/build/index.html")));
-// app.get("*", (req, res) => {
-// 	let response = "";
-// 	fs.readdir("./client/build", (e, files) => {
-// 		res.send("inside readdir");
-// 		if (e) {
-// 			res.end("error " + e);
-// 			return;
-// 		}
-//
-// 		files.forEach(file => (response += file));
-// 		res.end(response);
-// 	});
-// });
-//
 
 const PORT = process.env.PORT || 8080;
 

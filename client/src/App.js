@@ -10,7 +10,7 @@ const App = () => (
 			<Route path="/chat" component={Chat} />
 			<Redirect
 				to={{
-					pathname: "/",
+					pathname: "/"
 				}}
 			/>
 		</Switch>
