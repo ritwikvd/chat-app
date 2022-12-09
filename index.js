@@ -10,7 +10,7 @@ const app = express();
 const server = require("http").createServer(app);
 const io = require("socket.io")(server, {
 	cors: {
-		origin: "https://chat-app-client-ritwikvd.vercel.app/"
+		origin: false
 	}
 });
 
@@ -18,14 +18,14 @@ const io = require("socket.io")(server, {
 dotenv.config({ path: "./config/config.env" });
 
 //Initialize middleware
-app.use(cors());
+// app.use(cors({ origin: "https://chat-apps-client-ritwikvd.vercel.app" }));
 app.use(express.json());
 //
 
 //Use React build
-app.use(express.static("./client/build"));
-
-app.get("*", (req, res) => res.sendFile(path.resolve("./client/build/index.html")));
+// app.use(express.static("./client/build"));
+//
+// app.get("*", (req, res) => res.sendFile(path.resolve("./client/build/index.html")));
 
 const PORT = process.env.PORT || 8080;
 
