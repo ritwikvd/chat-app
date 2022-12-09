@@ -30,7 +30,7 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 8080;
 
-server.listen(PORT, console.log(`yoohoo from ${process.env.NODE_ENV} on port:${PORT}`));
+server.listen(PORT, console.log(`yoohoo from ${process.env.NODE_ENV} on port: ${PORT}`));
 
 //Socket emitters and handlers
 io.on("connection", handleConnection);
