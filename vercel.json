@@ -1,4 +1,4 @@
 {
     "installCommand": "npm i",
-    "outputDirectory": "build"
+    "rewrites": [{"source": "/(.*)", "destination": "index.js"}]
 }
