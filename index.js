@@ -14,7 +14,7 @@ const io = require("socket.io")(server);
 dotenv.config({ path: "./config/config.env" });
 
 //Initialize middleware
-app.use(cors());
+app.use(cors({ credentials: true, origin: true }));
 app.use(express.json());
 //
 
