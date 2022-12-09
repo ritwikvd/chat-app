@@ -1,4 +1,4 @@
 {
     "installCommand": "npm i",
-    "outputDirectory": "build"
+    "outputDirectory": "/build"
 }
