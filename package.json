@@ -18,6 +18,7 @@
 		"socket.io": "latest"
 	},
 	"devDependencies": {
-		"nodemon": "latest"
+		"nodemon": "latest",
+		"vercel": "^28.8.0"
 	}
 }

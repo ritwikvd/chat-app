@@ -1,5 +1,4 @@
 {
     "installCommand": "npm i",
-    "rewrites": [{"source": "/(.*)", "destination": "index.js"}],
-    "headers": [{"source": "/(.*)", "headers": [{"access-control-allow-origin": "https://chat-app-client-ritwikvd.vercel.app"}]}]
+    "rewrites": [{"source": "/(.*)", "destination": "index.js"}]
 }
