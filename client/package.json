@@ -10,8 +10,8 @@
     "react": "latest",
     "react-dom": "latest",
     "react-emoji": "latest",
-    "react-router-dom": "latest",
-    "react-scripts": "^5.0.1",
+    "react-router-dom": "5.1.2",
+    "react-scripts": "latest",
     "react-scroll-to-bottom": "latest",
     "socket.io-client": "latest"
   },

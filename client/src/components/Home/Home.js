@@ -26,11 +26,7 @@ const Home = props => {
 			setTimeout(() => setError(false), 5000);
 		}
 
-		socket = io(process.env.REACT_APP_SOCKET_ENDPOINT, {
-			cors: {
-				origin: false
-			}
-		});
+		socket = io(process.env.REACT_APP_SOCKET_ENDPOINT);
 
 		setFade(true);
 	}, []);

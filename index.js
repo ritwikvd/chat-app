@@ -10,7 +10,8 @@ const app = express();
 const server = require("http").createServer(app);
 const io = require("socket.io")(server, {
 	cors: {
-		origin: false
+		origin: "https://chat-app-client-ritwikvd.vercel.app",
+		credentials: true
 	}
 });
 
